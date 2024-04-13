@@ -6,18 +6,18 @@ function Orders() {
         { orderId: 1, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
         { orderId: 2, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
         { orderId: 3, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
-        { orderId: 1, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
-        { orderId: 2, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
-        { orderId: 3, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
-        { orderId: 1, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
-        { orderId: 2, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
-        { orderId: 3, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
+        { orderId: 4, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
+        { orderId: 5, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
+        { orderId: 6, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
+        { orderId: 7, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
+        { orderId: 8, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
+        { orderId: 9, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
     ];
 
     return (
         <div className="container mx-auto mt-8">
             <h2 className="text-3xl font-semibold mb-4">Orders</h2>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto p-2">
                 <table className="table-auto min-w-full border-collapse border border-gray-900">
                     <thead>
                         <tr className="bg-gray-900">
