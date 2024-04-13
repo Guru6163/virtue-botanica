@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { addNewCategory, getAllCategories, getAllProducts, addNewProduct } from '../apis/api';
 
 function Products() {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -10,23 +11,13 @@ function Products() {
         sellingCost: 0
     });
     const [newCategory, setNewCategory] = useState('');
+    const [products, setProducts] = useState([])
+    const [categories, setCategories] = useState([])
 
-    const products = [
-        {
-            productName: 'Neem Soap',
-            category: 'Soap',
-            manufacturingCost: 250,
-            sellingCost: 350,
-            profit: 100
-        },
-        {
-            productName: 'Handmade Candle',
-            category: 'Candle',
-            manufacturingCost: 150,
-            sellingCost: 250,
-            profit: 100
-        }
-    ];
+    useEffect(() => {
+        getAllCategories().then(res => setCategories(res))
+        getAllProducts().then(res=>setProducts(res))
+    }, [])
 
     const toggleProductModal = () => {
         setIsProductModalOpen(!isProductModalOpen);
@@ -38,11 +29,14 @@ function Products() {
 
     const handleProductChange = (e) => {
         const { name, value } = e.target;
+        const parsedValue = (name === 'manufacturingCost' || name === 'sellingCost') ? parseInt(value) : value;
+    
         setNewProduct({
             ...newProduct,
-            [name]: value
+            [name]: parsedValue
         });
     };
+    
 
     const handleCategoryChange = (e) => {
         setNewCategory(e.target.value);
@@ -50,7 +44,7 @@ function Products() {
 
     const handleProductSubmit = (e) => {
         e.preventDefault();
-        console.log('New product:', newProduct);
+        addNewProduct(newProduct).then(res=>console.log(res))
         setNewProduct({
             productName: '',
             category: '',
@@ -62,7 +56,7 @@ function Products() {
 
     const handleCategorySubmit = (e) => {
         e.preventDefault();
-        console.log('New category:', newCategory);
+        addNewCategory(newCategory).then(res => console.log(res))
         setNewCategory('');
         toggleCategoryModal();
     };
@@ -87,17 +81,19 @@ function Products() {
                             <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Product Name</th>
                             <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Category</th>
                             <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Manufacturing Cost</th>
+                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Selling Cost</th>
                             <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Profit</th>
                             <th className="px-6 py-3 font-medium border-b border-gray-300 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((product, index) => (
+                        {products?.map((product, index) => (
                             <tr key={index} className='bg-white'>
                                 <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">{product.productName}</td>
                                 <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">{product.category}</td>
                                 <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.manufacturingCost}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.profit}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.sellingCost}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.sellingCost - product.manufacturingCost}</td>
                                 <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">
                                     <button onClick={() => handleDelete(index)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
                                 </td>
@@ -131,8 +127,14 @@ function Products() {
                                                     </div>
                                                     <div className="mb-4">
                                                         <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-                                                        <input type="text" name="category" id="category" value={newProduct.category} onChange={handleProductChange} className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm  sm:text-sm border-2 border-gray-300 rounded-md py-2 px-3" />
+                                                        <select name="category" id="category" value={newProduct.category} onChange={handleProductChange} className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm  sm:text-sm border-2 border-gray-300 rounded-md py-2 px-3">
+                                                            <option value="">Select category</option>
+                                                            {categories.map(category => (
+                                                                <option key={category.id} value={category.categoryName}>{category.categoryName}</option>
+                                                            ))}
+                                                        </select>
                                                     </div>
+
                                                     <div className="mb-4">
                                                         <label htmlFor="manufacturingCost" className="block text-sm font-medium text-gray-700">Manufacturing Cost</label>
                                                         <input type="number" name="manufacturingCost" id="manufacturingCost" value={newProduct.manufacturingCost} onChange={handleProductChange} className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm  sm:text-sm border-2 border-gray-300 rounded-md py-2 px-3" />

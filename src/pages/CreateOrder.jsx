@@ -1,23 +1,8 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { getAllProducts } from '../apis/api';
 
 function CreateOrder() {
-
-    const products = [
-        {
-            productName: 'Neem Soap',
-            manufacturingCost: 250,
-            sellingCost: 350,
-            profit: 100
-        },
-        {
-            productName: 'Handmade Candle',
-            manufacturingCost: 150,
-            sellingCost: 250,
-            profit: 100
-        }
-    ]
-
+    const [products, setProducts] = useState([])
     const [customerDetails, setCustomerDetails] = useState({
         firstName: '',
         lastName: '',
@@ -31,8 +16,11 @@ function CreateOrder() {
 
     const [items, setItems] = useState([]);
     const [orderDate, setOrderDate] = useState('');
-    const { register, handleSubmit, errors } = useForm();
 
+
+    useEffect(() => {
+        getAllProducts().then(res => setProducts(res))
+    }, [])
 
     const handleDateChange = (e) => {
         setOrderDate(e.target.value);
@@ -75,6 +63,7 @@ function CreateOrder() {
 
 
     const onSubmit = (data) => {
+        
         console.log(data);
     };
 
@@ -82,7 +71,7 @@ function CreateOrder() {
     return (
         <div className="mx-auto mt-8 px-4 lg:px-8">
             <h2 className="text-3xl text-center font-semibold mb-6">Create Order</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full  mx-auto grid grid-cols-3 gap-6">
+            <form onSubmit={onSubmit} className="w-full  mx-auto grid grid-cols-3 gap-6">
                 <div className="border border-gray-300 rounded-md p-4">
                     <h3 className="text-xl font-semibold mb-4">Customer Information</h3>
                     <div className="mb-4">
