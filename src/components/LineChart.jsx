@@ -10,7 +10,11 @@ const LineChart = ({ interval = 'past14' }) => {
 
         switch (interval) {
             case 'daily':
-                categories = new Array(7).fill().map((_, index) => `Day ${index + 1}`);
+                categories = new Array(7).fill().map((_, index) => {
+                    const date = new Date();
+                    date.setDate(date.getDate() - index);
+                    return `${date.getDate()} ${getMonthName(date.getMonth())}`; // Get real month name
+                }).reverse(); // Reverse the array to get dates in ascending order
                 seriesData = new Array(7).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 7 days
                 break;
             case 'weekly':
@@ -18,42 +22,51 @@ const LineChart = ({ interval = 'past14' }) => {
                 seriesData = new Array(4).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 4 weeks
                 break;
             case 'monthly':
-                categories = new Array(4).fill().map((_, index) => `Month ${index + 1}`);
+                categories = new Array(4).fill().map((_, index) => {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - index);
+                    return `${getMonthName(date.getMonth())} ${date.getFullYear()}`; // Get real month name and year
+                }).reverse();
                 seriesData = new Array(4).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 4 months
                 break;
             case 'past7':
                 categories = new Array(7).fill().map((_, index) => {
                     const date = new Date();
                     date.setDate(date.getDate() - index);
-                    return `${date.getDate()}/${date.getMonth() + 1}`;
-                });
+                    return `${date.getDate()} ${getMonthName(date.getMonth())}`; // Get real month name
+                }).reverse(); // Reverse the array to get dates in ascending order
                 seriesData = new Array(7).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 7 days
                 break;
             case 'past14':
                 categories = new Array(14).fill().map((_, index) => {
                     const date = new Date();
                     date.setDate(date.getDate() - index);
-                    return `${date.getDate()}/${date.getMonth() + 1}`;
-                });
+                    return `${date.getDate()} ${getMonthName(date.getMonth())}`; // Get real month name
+                }).reverse(); // Reverse the array to get dates in ascending order
                 seriesData = new Array(14).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 14 days
                 break;
             case 'past30':
                 categories = new Array(30).fill().map((_, index) => {
                     const date = new Date();
                     date.setDate(date.getDate() - index);
-                    return `${date.getDate()}/${date.getMonth() + 1}`;
-                });
+                    return `${date.getDate()} ${getMonthName(date.getMonth())}`; // Get real month name
+                }).reverse(); // Reverse the array to get dates in ascending order
                 seriesData = new Array(30).fill().map(() => Math.floor(Math.random() * 1000)); // Random sales data for 30 days
                 break;
             default:
                 break;
         }
-
+        
 
         return {
             categories,
             series: [{ name: 'Sales', data: seriesData }]
         };
+    };
+
+    const getMonthName = (monthIndex) => {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return months[monthIndex];
     };
 
     const dummyData = generateDummyData();
@@ -85,8 +98,10 @@ const LineChart = ({ interval = 'past14' }) => {
         },
         colors: ['#4caf50'], // Line color
         dataLabels: {
-            enabled: false // Disable data labels
+            enabled: true,
+            enabledOnSeries: [1]
         },
+
         stroke: {
             curve: 'smooth', // Smooth curve for the line
             width: 3 // Line width
