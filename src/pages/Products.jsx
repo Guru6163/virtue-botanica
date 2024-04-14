@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct } from '../apis/api';
+import { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory } from '../apis/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -119,6 +119,22 @@ function Products() {
             setProducts(filteredProducts);
         }
     };
+
+    const handleCategoryDelete = async (category) => {
+        try {
+            const res = await deleteCategory(category.id);
+            if (res) {
+                toast.success("Category deleted successfully!");
+                fetchProductsAndCategories();
+            } else {
+                toast.error("Failed to delete category. Please try again later.");
+            }
+        } catch (error) {
+            console.error("Error deleting category: ", error);
+            toast.error("Failed to delete category. Please try again later.");
+        }
+    };
+    
     
 
     return (
@@ -172,8 +188,29 @@ function Products() {
                     </tbody>
                 </table>
             </div>
-
-
+            <div className='font-bold my-4 text-xl'>
+                Categories
+            </div>
+            <div className="overflow-x-auto">
+                <table className="table-auto w-1/4 border-collapse border border-gray-900 mb-4">
+                    <thead>
+                        <tr className="bg-gray-900 text-white">
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Category Name</th>
+                            <th className="px-6 py-3 font-medium border border-gray-900 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categories.map((category, index) => (
+                            <tr key={index} className='bg-white'>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{category.categoryName}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">
+                                    <button onClick={() => handleCategoryDelete(category)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {/* Product Modal */}
             {isProductModalOpen && (

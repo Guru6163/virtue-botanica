@@ -91,4 +91,16 @@ const getAllProducts = async () => {
     }
 };
 
-export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct };
+const deleteCategory = async (categoryId) => {
+    try {
+        await deleteDoc(doc(db, "categories", categoryId));
+        console.log("Category deleted successfully");
+        return true;
+    } catch (error) {
+        console.error("Error deleting category: ", error);
+        return false;
+    }
+};
+
+
+export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory };
