@@ -42,7 +42,7 @@ function Products() {
 
     const handleProductChange = (e) => {
         const { name, value } = e.target;
-        const parsedValue = value === '' ? 0 : (name === 'manufacturingCost' || name === 'sellingCost') ? parseInt(value) : value;
+        const parsedValue = (name === 'manufacturingCost' || name === 'sellingCost') ? parseInt(value) : value;
 
         setNewProduct({
             ...newProduct,
@@ -108,7 +108,18 @@ function Products() {
         }
     };
 
-
+    const handleCategoryFilter = (e) => {
+        const selectedCategory = e.target.value;
+        if (selectedCategory === "") {
+            // If no category is selected, show all products
+            fetchProductsAndCategories();
+        } else {
+            // Filter products based on the selected category
+            const filteredProducts = products.filter(product => product.category === selectedCategory);
+            setProducts(filteredProducts);
+        }
+    };
+    
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -118,7 +129,14 @@ function Products() {
                 <div className='space-x-4'>
                     <button onClick={toggleCategoryModal} className='px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'>Add New Category</button>
                     <button onClick={toggleProductModal} className='px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'>Add New Product</button>
+                    <select onChange={handleCategoryFilter} className="px-6 py-2 bg-gray-200 text-gray-800 text-sm rounded-md">
+                        <option value="">Filter by Category</option>
+                        {categories.map(category => (
+                            <option key={category.id} value={category.categoryName}>{category.categoryName}</option>
+                        ))}
+                    </select>
                 </div>
+
             </div>
             <div className="overflow-x-auto">
                 <table className="table-auto w-full border-collapse border border-gray-900">
