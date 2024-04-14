@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { addNewCategory, getAllCategories, getAllProducts, addNewProduct } from '../apis/api';
+import { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct } from '../apis/api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function Products() {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -15,9 +18,19 @@ function Products() {
     const [categories, setCategories] = useState([])
 
     useEffect(() => {
-        getAllCategories().then(res => setCategories(res))
-        getAllProducts().then(res=>setProducts(res))
-    }, [])
+        fetchProductsAndCategories();
+    }, []);
+
+    const fetchProductsAndCategories = async () => {
+        try {
+            const categoriesData = await getAllCategories();
+            const productsData = await getAllProducts();
+            setCategories(categoriesData);
+            setProducts(productsData);
+        } catch (error) {
+            console.error("Error fetching data: ", error);
+        }
+    };
 
     const toggleProductModal = () => {
         setIsProductModalOpen(!isProductModalOpen);
@@ -29,14 +42,14 @@ function Products() {
 
     const handleProductChange = (e) => {
         const { name, value } = e.target;
-        const parsedValue = (name === 'manufacturingCost' || name === 'sellingCost') ? parseInt(value) : value;
-    
+        const parsedValue = value === '' ? 0 : (name === 'manufacturingCost' || name === 'sellingCost') ? parseInt(value) : value;
+
         setNewProduct({
             ...newProduct,
             [name]: parsedValue
         });
     };
-    
+
 
     const handleCategoryChange = (e) => {
         setNewCategory(e.target.value);
@@ -44,29 +57,62 @@ function Products() {
 
     const handleProductSubmit = (e) => {
         e.preventDefault();
-        addNewProduct(newProduct).then(res=>console.log(res))
-        setNewProduct({
-            productName: '',
-            category: '',
-            manufacturingCost: 0,
-            sellingCost: 0
-        });
-        toggleProductModal();
+        addNewProduct(newProduct)
+            .then(res => {
+                toast.success("Product added successfully!");
+                setNewProduct({
+                    productName: '',
+                    category: '',
+                    manufacturingCost: 0,
+                    sellingCost: 0
+                });
+                toggleProductModal();
+                fetchProductsAndCategories(); // Refresh products and categories
+            })
+            .catch(error => {
+                console.error(error);
+                toast.error(error);
+            });
     };
 
-    const handleCategorySubmit = (e) => {
+    const handleCategorySubmit = async (e) => {
         e.preventDefault();
-        addNewCategory(newCategory).then(res => console.log(res))
-        setNewCategory('');
-        toggleCategoryModal();
+        try {
+            const res = await addNewCategory(newCategory);
+            if (res.error) {
+                toast.error(res.error);
+            } else {
+                toast.success("Category added successfully!");
+                setNewCategory('');
+                toggleCategoryModal();
+                fetchProductsAndCategories(); // Refresh products and categories
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to add category. Please try again later.");
+        }
     };
 
-    const handleDelete = (index) => {
-        console.log('Deleting product at index:', index);
+    const handleDelete = async (product) => {
+        try {
+            const res = await deleteProduct(product?.id);
+            if (res) {
+                toast.success("Product deleted successfully!");
+                fetchProductsAndCategories(); // Refresh products and categories
+            } else {
+                toast.error("Failed to delete product. Please try again later.");
+            }
+        } catch (error) {
+            console.error("Error deleting product: ", error);
+            toast.error("Failed to delete product. Please try again later.");
+        }
     };
+
+
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <ToastContainer />
             <div className='flex justify-between  mb-2'>
                 <h2 className="text-2xl font-bold mb-4">Products</h2>
                 <div className='space-x-4'>
@@ -75,33 +121,41 @@ function Products() {
                 </div>
             </div>
             <div className="overflow-x-auto">
-                <table className="table-auto w-full border-collapse border border-gray-300">
+                <table className="table-auto w-full border-collapse border border-gray-900">
                     <thead>
                         <tr className="bg-gray-900 text-white">
-                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Product Name</th>
-                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Category</th>
-                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Manufacturing Cost</th>
-                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Selling Cost</th>
-                            <th className="px-6 py-3 text-center font-medium border-b border-gray-300">Profit</th>
-                            <th className="px-6 py-3 font-medium border-b border-gray-300 text-center">Actions</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Product Name</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Category</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Manufacturing Cost</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Selling Cost</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Profit</th>
+                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Profit Percentage</th>
+                            <th className="px-6 py-3 font-medium border border-gray-900 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {products?.map((product, index) => (
                             <tr key={index} className='bg-white'>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">{product.productName}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">{product.category}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.manufacturingCost}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.sellingCost}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">Rs.{product.sellingCost - product.manufacturingCost}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border-b border-gray-300 text-center">
-                                    <button onClick={() => handleDelete(index)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{product.productName}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{product.category}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">Rs.{product.manufacturingCost}</td>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">Rs.{product.sellingCost}</td>
+                                <td className={`px-6 py-2 whitespace-nowrap border border-gray-300 text-center ${product.sellingCost - product.manufacturingCost > 0 ? '' : ''}`}>
+                                    <button className="rounded-md px-4 py-1 bg-green-500 text-white">{`Rs.${(product.sellingCost - product.manufacturingCost).toFixed(2)}`}</button>
+                                </td>
+                                <td className={`px-6 py-2 whitespace-nowrap border border-gray-300 text-center ${((product.sellingCost - product.manufacturingCost) / product.manufacturingCost * 100).toFixed(2) > 0 ? '' : ''}`}>
+                                    <button className="rounded-md px-4 py-1 bg-green-500 text-white">{`${((product.sellingCost - product.manufacturingCost) / product.manufacturingCost * 100).toFixed(2)}%`}</button>
+                                </td>
+                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">
+                                    <button onClick={() => handleDelete(product)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+
 
             {/* Product Modal */}
             {isProductModalOpen && (

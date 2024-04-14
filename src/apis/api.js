@@ -1,6 +1,7 @@
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
+// Function to add a new category
 const addNewCategory = async (categoryName) => {
     try {
         // Check if a category with the same name already exists
@@ -22,6 +23,7 @@ const addNewCategory = async (categoryName) => {
     }
 };
 
+// Function to add a new product
 const addNewProduct = async (productData) => {
     try {
         const productQuery = query(collection(db, "products"), where("productName", "==", productData.productName));
@@ -39,7 +41,19 @@ const addNewProduct = async (productData) => {
     }
 };
 
+// Function to delete a product
+const deleteProduct = async (productId) => {
+    try {
+        await deleteDoc(doc(db, "products", productId));
+        console.log("Product deleted successfully");
+        return true;
+    } catch (error) {
+        console.error("Error deleting product: ", error);
+        return false;
+    }
+};
 
+// Function to get all categories
 const getAllCategories = async () => {
     try {
         const querySnapshot = await getDocs(collection(db, "categories"));
@@ -58,22 +72,23 @@ const getAllCategories = async () => {
     }
 };
 
+// Function to get all products
 const getAllProducts = async () => {
     try {
         const querySnapshot = await getDocs(collection(db, "products"));
-        const categories = [];
+        const products = [];
         querySnapshot.forEach((doc) => {
-            const categoryData = doc.data();
-            categories.push({
+            const productData = doc.data();
+            products.push({
                 id: doc.id,
-                ...categoryData
+                ...productData
             });
         });
-        return categories;
+        return products;
     } catch (error) {
-        console.error("Error getting categories: ", error);
+        console.error("Error getting products: ", error);
         return null;
     }
 };
 
-export { addNewCategory, getAllCategories, getAllProducts, addNewProduct };
+export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct };
