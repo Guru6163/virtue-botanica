@@ -6,6 +6,7 @@ import Layout from "./layout/Layout.jsx"
 import Orders from './pages/Orders.jsx';
 import CreateOrder from './pages/CreateOrder.jsx';
 import Products from './pages/Products.jsx';
+import Invoice from './pages/Invoice.jsx';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<Invoice />} />
           <Route path="create-order" element={<CreateOrder />} />
           <Route path="products" element={<Products />} />
         </Route>

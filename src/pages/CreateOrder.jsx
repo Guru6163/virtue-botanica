@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getAllProducts } from '../apis/api';
+import { addNewOrder, getAllProducts } from '../apis/api';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 function CreateOrder() {
     const [products, setProducts] = useState([])
+    const navigate = useNavigate()
     const [customerDetails, setCustomerDetails] = useState({
         firstName: '',
         lastName: '',
@@ -28,9 +32,10 @@ function CreateOrder() {
 
     const getTotalPrice = () => {
         return items.reduce((total, item) => {
-            return total + item.product.sellingCost * item.quantity;
+            return total + (Number(item.product.sellingCost) * Number(item.quantity));
         }, 0);
     };
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,7 +44,7 @@ function CreateOrder() {
 
     const handleAddItem = () => {
         if (products.length > 0) {
-            setItems([...items, { product: products[0], quantity: 1 }]);
+            setItems([...items, { product: products[0], quantity: '1' }]);
         }
     };
 
@@ -62,14 +67,35 @@ function CreateOrder() {
     };
 
 
-    const onSubmit = (data) => {
-        
-        console.log(data);
+    const onSubmit = async (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
+        try {
+            const orderId = await addNewOrder({
+                customerDetails,
+                items,
+                totalPrice: getTotalPrice()
+            });
+            if (orderId) {
+                console.log("Order added successfully with ID:", orderId);
+                toast.success("Order placed successfully!");
+                setTimeout(()=>{
+                    navigate('/orders')
+                },2000)
+            } else {
+                console.error("Failed to add order");
+                toast.error("Failed to place order. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error adding order:", error);
+            toast.error("An error occurred while placing the order. Please try again later.");
+        }
     };
+    
 
 
     return (
         <div className="mx-auto mt-8 px-4 lg:px-8">
+            <ToastContainer />
             <h2 className="text-3xl text-center font-semibold mb-6">Create Order</h2>
             <form onSubmit={onSubmit} className="w-full  mx-auto grid grid-cols-3 gap-6">
                 <div className="border border-gray-300 rounded-md p-4">

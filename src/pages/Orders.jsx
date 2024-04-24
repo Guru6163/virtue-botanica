@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAllOrders } from '../apis/api';
 
 function Orders() {
-    // Dummy orders data
-    const orders = [
-        { orderId: 1, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
-        { orderId: 2, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
-        { orderId: 3, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
-        { orderId: 4, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
-        { orderId: 5, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
-        { orderId: 6, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
-        { orderId: 7, customerName: 'John Doe', phoneNumber: '1234567890', itemsCount: 3, cost: 100, deliveryStatus: 'Pending' },
-        { orderId: 8, customerName: 'Jane Smith', phoneNumber: '9876543210', itemsCount: 2, cost: 75, deliveryStatus: 'Delivered' },
-        { orderId: 9, customerName: 'Alice Johnson', phoneNumber: '4561237890', itemsCount: 4, cost: 120, deliveryStatus: 'Shipped' },
-    ];
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate(); // Initialize navigate hook
+
+    useEffect(() => {
+        getAllOrders()
+            .then(res => {
+                setOrders(res);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+                setLoading(false);
+            });
+    }, []);
+
+    const handleOrderClick = (orderId) => {
+        navigate(`/orders/${orderId}`); // Navigate to order details page
+    };
 
     return (
         <div className="container mx-auto mt-8">
@@ -30,16 +39,30 @@ function Orders() {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map(order => (
-                            <tr key={order.orderId}>
-                                <td className="border px-4 py-2">{order.orderId}</td>
-                                <td className="border px-4 py-2">{order.customerName}</td>
-                                <td className="border px-4 py-2">{order.phoneNumber}</td>
-                                <td className="border px-4 py-2">{order.itemsCount}</td>
-                                <td className="border px-4 py-2">${order.cost}</td>
-                                <td className={`border px-4 py-2 text-center ${getStatusColor(order.deliveryStatus)}`}>{order.deliveryStatus}</td>
+                        {loading ? (
+                            <tr>
+                                <td colSpan="6" className="text-center py-4">
+                                    Loading...
+                                </td>
                             </tr>
-                        ))}
+                        ) : orders.length === 0 ? (
+                            <tr>
+                                <td colSpan="6" className="text-center py-4">
+                                    No Orders Available
+                                </td>
+                            </tr>
+                        ) : (
+                            orders.map(order => (
+                                <tr className='cursor-pointer hover:bg-gray-100' key={order.orderId} onClick={() => handleOrderClick(order.id)}>
+                                    <td className="border px-4 py-2">{order.orderId}</td>
+                                    <td className="border px-4 py-2">{order.customerDetails?.firstName} {order.customerDetails?.lastName}</td>
+                                    <td className="border px-4 py-2">{order.customerDetails?.phone}</td>
+                                    <td className="border px-4 py-2">{order.items.reduce((total, item) => total + parseInt(item.quantity), 0)}</td>
+                                    <td className="border px-4 py-2">Rs.{order.totalPrice}</td>
+                                    <td className={`border px-4 py-2 text-center capitalize ${getStatusColor(order.deliveryStatus)}`}>{order.deliveryStatus}</td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -50,7 +73,7 @@ function Orders() {
 // Function to determine status color
 function getStatusColor(status) {
     switch (status) {
-        case 'Pending':
+        case 'pending':
             return 'text-yellow-800 bg-yellow-200';
         case 'Delivered':
             return 'text-green-800 bg-green-200';

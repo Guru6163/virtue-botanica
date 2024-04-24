@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 // Function to add a new category
@@ -102,5 +102,94 @@ const deleteCategory = async (categoryId) => {
     }
 };
 
+// Function to add a new order
+const addNewOrder = async (orderData) => {
+    try {
+        // Get the latest order to determine the next order ID
+        const latestOrderQuerySnapshot = await getDocs(collection(db, "orders"));
+        let latestOrderId = 0;
+        latestOrderQuerySnapshot.forEach(doc => {
+            const orderId = parseInt(doc.data().orderId.replace('#', ''), 10);
+            if (orderId >= latestOrderId) {
+                latestOrderId = orderId + 1;
+            }
+        });
 
-export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory };
+        // If there are no existing orders, set the latestOrderId to 1
+        if (latestOrderId === 0) {
+            latestOrderId = 1;
+        } 
+
+        const orderId = `#${(latestOrderId).toString().padStart(5, '0')}`;
+
+        // Add the order with timestamp and generated order ID
+        const docRef = await addDoc(collection(db, "orders"), {
+            ...orderData,
+            orderId: orderId,
+            timestamp: serverTimestamp(),
+            deliveryStatus:'pending'
+        });
+        return orderId;
+    } catch (error) {
+        console.error("Error adding order document: ", error);
+        return null;
+    }
+};
+
+
+
+
+
+
+// Function to get all orders
+const getAllOrders = async () => {
+    try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        const orders = [];
+        querySnapshot.forEach((doc) => {
+            const orderData = doc.data();
+            orders.push({
+                id: doc.id,
+                ...orderData
+            });
+        });
+        return orders;
+    } catch (error) {
+        console.error("Error getting orders: ", error);
+        return null;
+    }
+};
+
+// Function to delete an order
+const deleteOrder = async (orderId) => {
+    try {
+        await deleteDoc(doc(db, "orders", orderId));
+        console.log("Order deleted successfully");
+        return true;
+    } catch (error) {
+        console.error("Error deleting order: ", error);
+        return false;
+    }
+};
+
+const getOrderById = async (orderId) => {
+    try {
+        const orderDoc = await getDoc(doc(db, "orders", orderId));
+        if (orderDoc.exists()) {
+            return {
+                id: orderDoc.id,
+                ...orderDoc.data()
+            };
+        } else {
+            console.error("Order does not exist");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error getting order by ID: ", error);
+        return null;
+    }
+};
+
+
+
+export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory, addNewOrder, getAllOrders, getOrderById, deleteOrder };
