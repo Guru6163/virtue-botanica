@@ -179,12 +179,12 @@ export default function CreateOrder() {
                 </Dialog>
             </div>
             <div className="card mt-6">
-                <DataTable className='shadow-lg' showGridlines value={addedItems} footer={calculateTotal()} >
-                    <Column style={{ border: '0.5px solid #9CA3AF' }} alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="product.productName" header="Item Name"></Column>
-                    <Column style={{ border: '0.5px solid #9CA3AF' }} alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="product.category" header="Category"></Column>
-                    <Column style={{ border: '0.5px solid #9CA3AF' }} alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="quantity" header="Quantity"></Column>
-                    <Column style={{ border: '0.5px solid #9CA3AF' }} alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="cost" header="Cost"></Column>
-                    <Column style={{ border: '0.5px solid #9CA3AF' }} alignHeader='center' align='center' bodyStyle={{ width: '200px' }} headerStyle={{ background: '#2463EB', color: 'white' }} body={removeButton} header="Action"></Column>
+                <DataTable size='small' className='shadow-lg' showGridlines value={addedItems} footer={calculateTotal()} >
+                    <Column style={{ border: '0.5px solid #9CA3AF' }} headerClassName='py-2' alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="product.productName" header="Item Name"></Column>
+                    <Column style={{ border: '0.5px solid #9CA3AF' }} headerClassName='py-2' alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="product.category" header="Category"></Column>
+                    <Column style={{ border: '0.5px solid #9CA3AF' }} headerClassName='py-2' alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="quantity" header="Quantity"></Column>
+                    <Column style={{ border: '0.5px solid #9CA3AF' }} headerClassName='py-2' alignHeader='center' align='center' headerStyle={{ background: '#2463EB', color: 'white' }} field="cost" header="Cost"></Column>
+                    <Column style={{ border: '0.5px solid #9CA3AF' }} headerClassName='py-2' alignHeader='center' align='center' bodyStyle={{ width: '200px' }} headerStyle={{ background: '#2463EB', color: 'white' }} body={removeButton} header="Action"></Column>
                 </DataTable>
             </div>
 
