@@ -7,10 +7,17 @@ import Orders from './pages/Orders.jsx';
 import CreateOrder from './pages/CreateOrder.jsx';
 import Products from './pages/Products.jsx';
 import Invoice from './pages/Invoice.jsx';
+import { PrimeReactProvider } from 'primereact/api';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+
+
+
 
 
 function App() {
   return (
+    <PrimeReactProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -22,6 +29,9 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </PrimeReactProvider>
+
+
   );
 }
 

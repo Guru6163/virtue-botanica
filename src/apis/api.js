@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc, serverTimestamp, getDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, serverTimestamp, getDoc, orderBy } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 // Function to add a new category
@@ -140,11 +140,10 @@ const addNewOrder = async (orderData) => {
 
 
 
-
-// Function to get all orders
+// Function to get all orders in descending order of creation time
 const getAllOrders = async () => {
     try {
-        const querySnapshot = await getDocs(collection(db, "orders"));
+        const querySnapshot = await getDocs(query(collection(db, "orders"), orderBy("timestamp", "desc")));
         const orders = [];
         querySnapshot.forEach((doc) => {
             const orderData = doc.data();
@@ -159,6 +158,7 @@ const getAllOrders = async () => {
         return null;
     }
 };
+
 
 // Function to delete an order
 const deleteOrder = async (orderId) => {
