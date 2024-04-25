@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, deleteDoc, doc, serverTimestamp, getDoc, orderBy } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, deleteDoc, doc, serverTimestamp, getDoc, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 // Function to add a new category
@@ -15,7 +15,7 @@ const addNewCategory = async (categoryName) => {
         const docRef = await addDoc(collection(db, "categories"), {
             categoryName: categoryName,
         });
-        
+
         return docRef.id;
     } catch (error) {
         console.error("Error adding category document: ", error);
@@ -118,7 +118,7 @@ const addNewOrder = async (orderData) => {
         // If there are no existing orders, set the latestOrderId to 1
         if (latestOrderId === 0) {
             latestOrderId = 1;
-        } 
+        }
 
         const orderId = `#${(latestOrderId).toString().padStart(5, '0')}`;
 
@@ -127,7 +127,7 @@ const addNewOrder = async (orderData) => {
             ...orderData,
             orderId: orderId,
             timestamp: serverTimestamp(),
-            deliveryStatus:'pending'
+            deliveryStatus: 'pending'
         });
         return orderId;
     } catch (error) {
@@ -136,8 +136,20 @@ const addNewOrder = async (orderData) => {
     }
 };
 
-
-
+const updateOrderStatus = async (orderId, deliveryStatus, trackingId) => {
+    try {
+        const orderRef = doc(db, "orders", orderId);
+        await updateDoc(orderRef, {
+            deliveryStatus: deliveryStatus,
+            trackingId: trackingId ? trackingId : 'N/A'
+        });
+        console.log("Order updated successfully");
+        return true;
+    } catch (error) {
+        console.error("Error updating order: ", error);
+        return false;
+    }
+};
 
 
 // Function to get all orders in descending order of creation time
@@ -192,4 +204,4 @@ const getOrderById = async (orderId) => {
 
 
 
-export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory, addNewOrder, getAllOrders, getOrderById, deleteOrder };
+export { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory, addNewOrder, getAllOrders, getOrderById, deleteOrder, updateOrderStatus };

@@ -7,10 +7,19 @@ import { Column } from 'primereact/column';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import { Toast } from 'primereact/toast';
 import { deleteOrder } from '../apis/api';
+import { Dialog } from 'primereact/dialog';
+import { Dropdown } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
+import { updateOrderStatus } from '../apis/api';
+
 
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [displayDialog, setDisplayDialog] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [trackingId, setTrackingId] = useState(null);
     const navigate = useNavigate(); // Initialize navigate hook
 
     useEffect(() => {
@@ -24,6 +33,18 @@ function Orders() {
                 setLoading(false);
             });
     }, []);
+
+
+    const refreshTable = () => {
+        getAllOrders()
+            .then(res => {
+                setOrders(res);
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+            });
+    };
+    
 
     const toast = useRef(null);
 
@@ -43,17 +64,9 @@ function Orders() {
             defaultFocus: 'reject',
             acceptClassName: 'p-button-danger',
             accept: async () => {
-                await deleteOrder(orderId)
-                accept()
-                getAllOrders()
-                .then(res => {
-                    setOrders(res);
-                    setLoading(false);
-                })
-                .catch(error => {
-                    console.error('Error fetching orders:', error);
-                    setLoading(false);
-                })
+                await deleteOrder(orderId);
+                accept();
+                refreshTable()
             },
             reject
         });
@@ -63,11 +76,39 @@ function Orders() {
         navigate(`/orders/${orderId}`); // Navigate to order details page
     };
 
-    const updateStatus = (orderId) => {
-        // Implement the update status functionality here
-        // For demonstration purposes, let's log the order ID to the console
-        console.log("Updating status for order with ID:", orderId);
+    const updateStatus = (order) => {
+        setSelectedOrder(order);
+        setSelectedStatus(order.deliveryStatus);
+        setDisplayDialog(true);
     };
+
+    const handleUpdateOrderStatus = () => {
+        if (!selectedOrder) {
+            console.error('No order selected');
+            return;
+        }
+        console.log("Updating status for order with ID:", selectedOrder.id, "New status:", selectedStatus);
+        updateOrderStatus(selectedOrder.id, selectedStatus, trackingId)
+            .then(async res => {
+                console.log(res);
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Order status updated successfully', life: 3000 });
+                await refreshTable();
+            })
+            .catch(error => {
+                console.error('Error updating order status:', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update order status', life: 3000 });
+            });
+        setDisplayDialog(false);
+    };
+    
+
+
+    const onHide = () => {
+        setSelectedOrder(null);
+        setSelectedStatus(null);
+        setDisplayDialog(false);
+    };
+
 
     return (
         <div className=" mt-8 px-8">
@@ -85,11 +126,30 @@ function Orders() {
                 <Column header="Actions" body={(rowData) => (
                     <div className="flex justify-evenly">
                         <Button label="Invoice" className="p-button-sm" onClick={() => handleOrderClick(rowData.id)} />
-                        <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData.id)} />
+                        <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData)} />
                         <Button label="Delete" className="p-button-sm p-button-danger" onClick={(e) => confirmDelete(e, rowData.id)} />
                     </div>
                 )} />
             </DataTable>
+            <Dialog header="Update Order Status" visible={displayDialog} style={{ width: '400px' }} onHide={onHide} className="p-dialog-custom">
+                <div className="p-fluid p-formgrid p-grid">
+                    <div className="p-field p-col-12">
+                        <label htmlFor="status" className="p-d-block">Status</label>
+                        <Dropdown id="status" value={selectedStatus} options={[{ label: 'Pending', value: 'pending' }, { label: 'Shipped', value: 'shipped' }, { label: 'Delivered', value: 'delivered' }]} onChange={(e) => setSelectedStatus(e.value)} optionLabel="label" placeholder="Select a status" />
+                    </div>
+                    {selectedStatus !== 'pending' && (
+                        <div className="p-field p-col-12 mt-4">
+                            <label htmlFor="trackingId" className="p-d-block">Tracking ID</label>
+                            <InputText id="trackingId" value={trackingId} onChange={(e) => setTrackingId(e.target.value)} />
+                        </div>
+                    )}
+                </div>
+                <div className="flex justify-end space-x-4 mt-5">
+                    <Button label="Cancel" icon="pi pi-times" onClick={onHide} className="p-button-sm p-button-danger p-ml-2" />
+                    <Button label="Update" icon="pi pi-check" onClick={handleUpdateOrderStatus} className="p-button-sm p-button-primary" />
+                </div>
+            </Dialog>
+
         </div>
     );
 }
