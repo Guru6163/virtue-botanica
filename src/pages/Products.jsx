@@ -6,9 +6,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 
-
-
-
 function Products() {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -19,8 +16,9 @@ function Products() {
         sellingCost: 0
     });
     const [newCategory, setNewCategory] = useState('');
-    const [products, setProducts] = useState([])
-    const [categories, setCategories] = useState([])
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
 
     useEffect(() => {
         fetchProductsAndCategories();
@@ -32,6 +30,7 @@ function Products() {
             const productsData = await getAllProducts();
             setCategories(categoriesData);
             setProducts(productsData);
+            setFilteredProducts(productsData); // Set filteredProducts initially to all products
         } catch (error) {
             console.error("Error fetching data: ", error);
         }
@@ -54,7 +53,6 @@ function Products() {
             [name]: parsedValue
         });
     };
-
 
     const handleCategoryChange = (e) => {
         setNewCategory(e.target.value);
@@ -117,11 +115,11 @@ function Products() {
         const selectedCategory = e.target.value;
         if (selectedCategory === "") {
             // If no category is selected, show all products
-            fetchProductsAndCategories();
+            setFilteredProducts(products);
         } else {
             // Filter products based on the selected category
             const filteredProducts = products.filter(product => product.category === selectedCategory);
-            setProducts(filteredProducts);
+            setFilteredProducts(filteredProducts);
         }
     };
 
@@ -152,10 +150,11 @@ function Products() {
             </td>
         );
     };
+
     const renderProfitPercentageColumn = (rowData) => {
         const profit = calculateProfit(rowData);
         const profitPercentage = (profit / rowData.manufacturingCost) * 100;
-    
+
         return (
             <td className='flex justify-center'>
                 <div className={`px-4 py-1 rounded-md ${profitPercentage >= 0 ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
@@ -164,18 +163,14 @@ function Products() {
             </td>
         );
     };
-    
 
     const renderActions = (rowData) => {
         return (
             <div>
                 <button onClick={() => handleDelete(rowData)} className='bg-red-500 text-white rounded-md px-4 py-1.5 w-full' >Delete</button>
             </div>
-        )
-
-    }
-
-
+        );
+    };
 
     return (
         <div className="p-10">
@@ -183,19 +178,18 @@ function Products() {
             <div className='flex justify-between  mb-2'>
                 <h2 className="text-2xl font-bold mb-4">Products</h2>
                 <div className='space-x-4'>
-                    <button onClick={toggleCategoryModal} className='px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'>Add New Category</button>
-                    <button onClick={toggleProductModal} className='px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700'>Add New Product</button>
-                    <select onChange={handleCategoryFilter} className="px-6 py-2 bg-gray-200 text-gray-800 text-sm rounded-md">
+                    <Button onClick={toggleCategoryModal} label='Add New Category'/>
+                    <Button onClick={toggleProductModal} label='Add New Product'/>
+                    <select onChange={handleCategoryFilter} className="px-6 py-3 bg-gray-200 text-gray-800 text-sm rounded-md">
                         <option value="">Filter by Category</option>
                         {categories.map(category => (
                             <option key={category.id} value={category.categoryName}>{category.categoryName}</option>
                         ))}
                     </select>
                 </div>
-
             </div>
             <div className="card">
-                <DataTable className="text-center" showGridlines value={products} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
+                <DataTable className="text-center" showGridlines value={filteredProducts} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
                     <Column field="productName" header="Name" ></Column>
                     <Column field="category" header="Category" ></Column>
                     <Column field="manufacturingCost" header="Manufacturing Cost" ></Column>
@@ -213,8 +207,6 @@ function Products() {
                         <button onClick={() => handleCategoryDelete(category)} className="bg-red-500 text-white rounded-md px-4 py-2 w-full">Delete</button>} />
                 </DataTable>
             </div>
-
-
             {/* Product Modal */}
             {isProductModalOpen && (
                 <div className="fixed z-10 inset-0 overflow-y-auto">
@@ -273,7 +265,6 @@ function Products() {
                     </div>
                 </div>
             )}
-
             {/* Category Modal */}
             {isCategoryModalOpen && (
                 <div className="fixed z-10 inset-0 overflow-y-auto">
