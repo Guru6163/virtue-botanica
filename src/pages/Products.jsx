@@ -156,7 +156,7 @@ function Products() {
     const renderActions = (rowData) => {
         return (
             <div>
-                <button onClick={() => handleDelete(rowData)} className='bg-red-500 text-white rounded-md px-4 py-2 w-full' >Delete</button>
+                <button onClick={() => handleDelete(rowData)} className='bg-red-500 text-white rounded-md px-4 py-1.5 w-full' >Delete</button>
             </div>
         )
 
