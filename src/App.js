@@ -10,6 +10,9 @@ import Invoice from './pages/Invoice.jsx';
 import { PrimeReactProvider } from 'primereact/api';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
+import NewOrder from './pages/NewOrder.jsx';
+import 'primeicons/primeicons.css';
+
 
 
 
@@ -24,7 +27,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="orders" element={<Orders />} />
           <Route path="orders/:id" element={<Invoice />} />
-          <Route path="create-order" element={<CreateOrder />} />
+          <Route path="create-order" element={<NewOrder />} />
           <Route path="products" element={<Products />} />
         </Route>
       </Routes>

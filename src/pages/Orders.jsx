@@ -81,18 +81,14 @@ function Orders() {
 
     const handleUpdateOrderStatus = () => {
         if (!selectedOrder) {
-            console.error('No order selected');
             return;
         }
-        console.log("Updating status for order with ID:", selectedOrder.id, "New status:", selectedStatus);
         updateOrderStatus(selectedOrder.id, selectedStatus, trackingId)
             .then(async res => {
-                console.log(res);
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'Order status updated successfully', life: 3000 });
                 await refreshTable();
             })
             .catch(error => {
-                console.error('Error updating order status:', error);
                 toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update order status', life: 3000 });
             });
         setDisplayDialog(false);
@@ -115,7 +111,7 @@ function Orders() {
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}}  alignHeader='center' align='center' field="orderId" header="Order ID"  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`}  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="customerDetails.phone" header="Phone Number"  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="customerDetails.phoneNumber" header="Phone Number"  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'}  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`}  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'}  />

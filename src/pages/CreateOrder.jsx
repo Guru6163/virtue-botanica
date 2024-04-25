@@ -12,7 +12,7 @@ function CreateOrder() {
         lastName: '',
         email: '',
         phone: '',
-        address: '',
+        address: '', 
         city: '',
         state: 'Tamil Nadu',
         zip: ''
