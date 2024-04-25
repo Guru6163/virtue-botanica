@@ -12,7 +12,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { updateOrderStatus } from '../apis/api';
 
-
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -34,7 +33,6 @@ function Orders() {
             });
     }, []);
 
-
     const refreshTable = () => {
         getAllOrders()
             .then(res => {
@@ -45,7 +43,6 @@ function Orders() {
             });
     };
     
-
     const toast = useRef(null);
 
     const accept = () => {
@@ -101,8 +98,6 @@ function Orders() {
         setDisplayDialog(false);
     };
     
-
-
     const onHide = () => {
         setSelectedOrder(null);
         setSelectedStatus(null);
@@ -110,20 +105,21 @@ function Orders() {
     };
 
 
+
     return (
-        <div className=" mt-8 px-8">
+        <div className="mt-8 px-8">
             <h2 className="text-2xl font-semibold mb-4">Orders</h2>
             <Toast ref={toast} />
             <ConfirmPopup />
-            <DataTable showGridlines value={orders} loading={loading} emptyMessage="No Orders Available">
-                <Column alignHeader='center' align='center' field="orderId" header="Order ID" sortable />
-                <Column alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`} sortable />
-                <Column alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'} sortable />
-                <Column alignHeader='center' align='center' field="customerDetails.phone" header="Phone Number" sortable />
-                <Column alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'} sortable />
-                <Column alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`} sortable />
-                <Column alignHeader='center' align='center' className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'} sortable />
-                <Column alignHeader='center' align='center' header="Actions" body={(rowData) => (
+            <DataTable showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}}  alignHeader='center' align='center' field="orderId" header="Order ID"  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`}  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'}  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="customerDetails.phone" header="Phone Number"  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'}  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`}  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'}  />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Actions" body={(rowData) => (
                     <div className="flex justify-evenly">
                         <Button label="Invoice" className="p-button-sm" onClick={() => handleOrderClick(rowData.id)} />
                         <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData)} />
@@ -149,7 +145,6 @@ function Orders() {
                     <Button label="Update" icon="pi pi-check" onClick={handleUpdateOrderStatus} className="p-button-sm p-button-primary" />
                 </div>
             </Dialog>
-
         </div>
     );
 }
