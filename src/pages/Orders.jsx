@@ -116,14 +116,14 @@ function Orders() {
             <Toast ref={toast} />
             <ConfirmPopup />
             <DataTable showGridlines value={orders} loading={loading} emptyMessage="No Orders Available">
-                <Column field="orderId" header="Order ID" sortable />
+                <Column alignHeader='center' align='center' field="orderId" header="Order ID" sortable />
                 <Column header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`} sortable />
-                <Column field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'} sortable />
-                <Column field="customerDetails.phone" header="Phone Number" sortable />
-                <Column header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'} sortable />
-                <Column field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`} sortable />
-                <Column className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'} sortable />
-                <Column header="Actions" body={(rowData) => (
+                <Column alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'} sortable />
+                <Column alignHeader='center' field="customerDetails.phone" header="Phone Number" sortable />
+                <Column alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'} sortable />
+                <Column alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`} sortable />
+                <Column alignHeader='center' align='center' className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'} sortable />
+                <Column alignHeader='center' align='center' header="Actions" body={(rowData) => (
                     <div className="flex justify-evenly">
                         <Button label="Invoice" className="p-button-sm" onClick={() => handleOrderClick(rowData.id)} />
                         <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData)} />
