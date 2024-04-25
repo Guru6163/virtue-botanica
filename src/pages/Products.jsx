@@ -147,11 +147,24 @@ function Products() {
     const renderProfitColumn = (rowData) => {
         const profit = calculateProfit(rowData);
         return (
-            <td className=''>
+            <td className='flex justify-center'>
                 <div className='bg-green-600 px-4 py-1 text-white rounded-md'>{`Rs.${profit.toFixed(2)}`}</div>
             </td>
         );
     };
+    const renderProfitPercentageColumn = (rowData) => {
+        const profit = calculateProfit(rowData);
+        const profitPercentage = (profit / rowData.manufacturingCost) * 100;
+    
+        return (
+            <td className='flex justify-center'>
+                <div className={`px-4 py-1 rounded-md ${profitPercentage >= 0 ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+                    {`${profitPercentage.toFixed(2)}%`}
+                </div>
+            </td>
+        );
+    };
+    
 
     const renderActions = (rowData) => {
         return (
@@ -188,7 +201,7 @@ function Products() {
                     <Column field="manufacturingCost" header="Manufacturing Cost" ></Column>
                     <Column field="sellingCost" header="Selling Cost" ></Column>
                     <Column header="Profit" body={renderProfitColumn} />
-                    <Column header="Profit Percentage" body={renderProfitColumn} />
+                    <Column header="Profit Percentage" body={renderProfitPercentageColumn} />
                     <Column header="Actions" body={renderActions} />
                 </DataTable>
             </div>
