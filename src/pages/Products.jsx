@@ -147,17 +147,17 @@ function Products() {
     const renderProfitColumn = (rowData) => {
         const profit = calculateProfit(rowData);
         return (
-            <td>
-                <div>{`Rs.${profit.toFixed(2)}`}</div>
+            <td className=''>
+                <div className='bg-green-600 px-4 py-1 text-white rounded-md'>{`Rs.${profit.toFixed(2)}`}</div>
             </td>
         );
     };
 
     const renderActions = (rowData) => {
         return (
-            <td>
-                <Button onClick={() => handleDelete(rowData)} label="Delete Item" severity="danger" />
-            </td>
+            <div>
+                <button onClick={() => handleDelete(rowData)} className='bg-red-500 text-white rounded-md px-4 py-2 w-full' >Delete</button>
+            </div>
         )
 
     }
