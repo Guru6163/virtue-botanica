@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { addNewCategory, getAllCategories, getAllProducts, addNewProduct, deleteProduct, deleteCategory } from '../apis/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+
+
 
 
 function Products() {
@@ -134,11 +139,33 @@ function Products() {
             toast.error("Failed to delete category. Please try again later.");
         }
     };
-    
-    
+
+    const calculateProfit = (product) => {
+        return product.sellingCost - product.manufacturingCost;
+    };
+
+    const renderProfitColumn = (rowData) => {
+        const profit = calculateProfit(rowData);
+        return (
+            <td>
+                <div>{`Rs.${profit.toFixed(2)}`}</div>
+            </td>
+        );
+    };
+
+    const renderActions = (rowData) => {
+        return (
+            <td>
+                <Button onClick={() => handleDelete(rowData)} label="Delete Item" severity="danger" />
+            </td>
+        )
+
+    }
+
+
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="p-10">
             <ToastContainer />
             <div className='flex justify-between  mb-2'>
                 <h2 className="text-2xl font-bold mb-4">Products</h2>
@@ -154,63 +181,26 @@ function Products() {
                 </div>
 
             </div>
-            <div className="overflow-x-auto">
-                <table className="table-auto w-full border-collapse border border-gray-900">
-                    <thead>
-                        <tr className="bg-gray-900 text-white">
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Product Name</th>
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Category</th>
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Manufacturing Cost</th>
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Selling Cost</th>
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Profit</th>
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Profit Percentage</th>
-                            <th className="px-6 py-3 font-medium border border-gray-900 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {products?.map((product, index) => (
-                            <tr key={index} className='bg-white'>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{product.productName}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{product.category}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">Rs.{product.manufacturingCost}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">Rs.{product.sellingCost}</td>
-                                <td className={`px-6 py-2 whitespace-nowrap border border-gray-300 text-center ${product.sellingCost - product.manufacturingCost > 0 ? '' : ''}`}>
-                                    <button className="rounded-md px-4 py-1 bg-green-500 text-white">{`Rs.${(product.sellingCost - product.manufacturingCost).toFixed(2)}`}</button>
-                                </td>
-                                <td className={`px-6 py-2 whitespace-nowrap border border-gray-300 text-center ${((product.sellingCost - product.manufacturingCost) / product.manufacturingCost * 100).toFixed(2) > 0 ? '' : ''}`}>
-                                    <button className="rounded-md px-4 py-1 bg-green-500 text-white">{`${((product.sellingCost - product.manufacturingCost) / product.manufacturingCost * 100).toFixed(2)}%`}</button>
-                                </td>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">
-                                    <button onClick={() => handleDelete(product)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="card">
+                <DataTable className="text-center" showGridlines value={products} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
+                    <Column field="productName" header="Name" ></Column>
+                    <Column field="category" header="Category" ></Column>
+                    <Column field="manufacturingCost" header="Manufacturing Cost" ></Column>
+                    <Column field="sellingCost" header="Selling Cost" ></Column>
+                    <Column header="Profit" body={renderProfitColumn} />
+                    <Column header="Profit Percentage" body={renderProfitColumn} />
+                    <Column header="Actions" body={renderActions} />
+                </DataTable>
             </div>
-            <div className='font-bold my-4 text-xl'>
-                Categories
+            <h2 className="text-2xl font-bold my-4">Categories</h2>
+            <div className="card">
+                <DataTable className="text-center" showGridlines value={categories} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ width: '30rem' }}>
+                    <Column field="categoryName" header="Name" ></Column>
+                    <Column header="Actions" body={(category) =>
+                        <button onClick={() => handleCategoryDelete(category)} className="bg-red-500 text-white rounded-md px-4 py-2 w-full">Delete</button>} />
+                </DataTable>
             </div>
-            <div className="overflow-x-auto">
-                <table className="table-auto w-1/4 border-collapse border border-gray-900 mb-4">
-                    <thead>
-                        <tr className="bg-gray-900 text-white">
-                            <th className="px-6 py-3 text-center font-medium border border-gray-900">Category Name</th>
-                            <th className="px-6 py-3 font-medium border border-gray-900 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {categories.map((category, index) => (
-                            <tr key={index} className='bg-white'>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">{category.categoryName}</td>
-                                <td className="px-6 py-2 whitespace-nowrap border border-gray-300 text-center">
-                                    <button onClick={() => handleCategoryDelete(category)} className="bg-red-500 text-white rounded-md px-4 py-2">Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+
 
             {/* Product Modal */}
             {isProductModalOpen && (

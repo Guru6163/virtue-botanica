@@ -29,7 +29,7 @@ export default function BasicDemo() {
     ];
 
     const start = (
-        <div style={{ fontSize: '1.5rem', fontWeight: 600, padding: '0.5rem 1rem' }}>
+        <div className='bg-green-700 text-white px-4 py-1 my-2 mr-6' style={{ fontSize: '1.5rem', fontWeight: 600 }}>
             Virtue Botanica
         </div>
     );
