@@ -42,7 +42,7 @@ function Orders() {
                 console.error('Error fetching orders:', error);
             });
     };
-    
+
     const toast = useRef(null);
 
     const accept = () => {
@@ -93,11 +93,17 @@ function Orders() {
             });
         setDisplayDialog(false);
     };
-    
+
     const onHide = () => {
         setSelectedOrder(null);
         setSelectedStatus(null);
         setDisplayDialog(false);
+    };
+
+    const deliveryStatusBgColor = {
+        'pending': 'bg-yellow-600 text-white font-bold py-1', // Yellow for pending
+        'shipped': 'bg-blue-600 text-white font-bold py-1', // Steel blue for shipped
+        'delivered': 'bg-green-600 text-white font-bold py-1' // Lime green for delivered
     };
 
 
@@ -107,15 +113,27 @@ function Orders() {
             <h2 className="text-2xl font-semibold mb-4">Orders</h2>
             <Toast ref={toast} />
             <ConfirmPopup />
-            <DataTable  showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}}  alignHeader='center' align='center' field="orderId" header="Order ID"  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="customerDetails.phoneNumber" header="Phone Number"  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' className='capitalize' field="deliveryStatus" header="Delivery Status" body={rowData => rowData.deliveryStatus ?? 'N/A'}  />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Actions" body={(rowData) => (
+            <DataTable showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="orderId" header="Order ID" />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`} />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'} />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="customerDetails.phoneNumber" header="Phone Number" />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' header="Items Count" body={rowData => rowData.items ? rowData.items.reduce((total, item) => total + parseInt(item.quantity), 0) : 'N/A'} />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="totalPrice" header="Cost" body={rowData => `Rs.${rowData.totalPrice ?? 'N/A'}`} />
+                <Column
+                    style={{ border: '0.5px solid #9CA3AF' }}
+                    headerStyle={{ background: '#2463EB', color: 'white' }}
+                    alignHeader='center'
+                    align='center'
+                    field="deliveryStatus"
+                    header="Delivery Status"
+                    body={rowData => (
+                        <div className={'capitalize ' + deliveryStatusBgColor[rowData.deliveryStatus]}  >
+                            {rowData.deliveryStatus ?? 'N/A'}
+                        </div>
+                    )}
+                />
+                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' header="Actions" body={(rowData) => (
                     <div className="flex justify-evenly">
                         <Button label="Invoice" className="p-button-sm" onClick={() => handleOrderClick(rowData.id)} />
                         <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData)} />
