@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaIndustry, FaChartLine, FaMoneyBillWave } from 'react-icons/fa';
+import { FaIndustry, FaChartLine } from 'react-icons/fa';
 import LineChart from '../components/LineChart';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getAllOrders } from '../apis/api';
@@ -24,17 +24,14 @@ function Dashboard() {
 
 
     useEffect(() => {
-        getAllOrders().then(res => setAllOrders(res))
-
-    }, [])
-
-    console.log(convertToOrderCountData(allOrders).series[0].data)
+        getAllOrders().then(res => setAllOrders(res));
+    }, []);
 
     return (
         <div>
             <div className="flex justify-center mt-6">
                 <Dropdown value={selectedFilter} onChange={(e) => setSelectedFilter(e.value)} options={filters} optionLabel="name" optionValue='code'
-                    placeholder="Select a Filter" className='shadow-lg' style={{width:'300px'}} />
+                    placeholder="Select a Filter" className='shadow-lg' style={{ width: '300px' }} />
             </div>
             <div className="flex justify-center">
                 <div className="w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">

@@ -1,7 +1,6 @@
 function convertToChartData(data, intervalType = 'week') {
     // Initialize an object to store sales data for each day
     const salesData = {};
-    console.log(data)
     // Iterate over each transaction
     data.forEach(transaction => {
         // Extract timestamp
