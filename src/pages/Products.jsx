@@ -189,7 +189,7 @@ function Products() {
                 </div>
             </div>
             <div className="card">
-                <DataTable size='small' className="text-center shadow-lg" showGridlines value={filteredProducts} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
+                <DataTable className="text-center shadow-lg" showGridlines value={filteredProducts} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
                     <Column style={{ border: '0.5px solid #9CA3AF' }} bodyClassName='font-bold' headerStyle={{background:'#2463EB',color:'white'}} field="productName" header="Name" ></Column>
                     <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="category" header="Category" ></Column>
                     <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="manufacturingCost" header="Manufacturing Cost" ></Column>
@@ -201,7 +201,7 @@ function Products() {
             </div>
             <h2 className="text-2xl font-bold my-4">Categories</h2>
             <div className="card">
-                <DataTable size='small' className="text-center" showGridlines value={categories} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ width: '30rem' }}>
+                <DataTable className="text-center" showGridlines value={categories} paginator rows={10} rowsPerPageOptions={[10, 25, 50]} tableStyle={{ width: '30rem' }}>
                     <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} field="categoryName" header="Name" ></Column>
                     <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} header="Actions" body={(category) =>
                         <button onClick={() => handleCategoryDelete(category)} className="bg-red-500 text-white rounded-md px-4 py-2 w-full">Delete</button>} />

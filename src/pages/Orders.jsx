@@ -107,7 +107,7 @@ function Orders() {
             <h2 className="text-2xl font-semibold mb-4">Orders</h2>
             <Toast ref={toast} />
             <ConfirmPopup />
-            <DataTable size='small' showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
+            <DataTable  showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}}  alignHeader='center' align='center' field="orderId" header="Order ID"  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`}  />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{background:'#2463EB',color:'white'}} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'}  />
