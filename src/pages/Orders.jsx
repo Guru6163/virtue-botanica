@@ -109,11 +109,11 @@ function Orders() {
 
 
     return (
-        <div className="mt-8 px-8">
+        <div className="mt-8 px-4 md:px-8">
             <h2 className="text-2xl font-semibold mb-4">Orders</h2>
             <Toast ref={toast} />
             <ConfirmPopup />
-            <DataTable showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
+            <DataTable responsive showGridlines value={orders} style={{ border: '0.5px solid #9CA3AF' }} className='shadow-lg' loading={loading} emptyMessage="No Orders Available">
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="orderId" header="Order ID" />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' header="Customer Name" body={rowData => `${rowData.customerDetails?.firstName ?? 'N/A'} ${rowData.customerDetails?.lastName ?? 'N/A'}`} />
                 <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' field="timestamp" header="Ordered At" body={rowData => rowData.timestamp ? new Date(rowData.timestamp.toDate()).toLocaleString('en-US', { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) : 'N/A'} />
