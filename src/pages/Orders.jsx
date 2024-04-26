@@ -101,9 +101,9 @@ function Orders() {
     };
 
     const deliveryStatusBgColor = {
-        'pending': 'bg-yellow-600 text-white font-bold py-1', // Yellow for pending
-        'shipped': 'bg-blue-600 text-white font-bold py-1', // Steel blue for shipped
-        'delivered': 'bg-green-600 text-white font-bold py-1' // Lime green for delivered
+        'pending': 'bg-yellow-600 text-white font-bold p-1.5', // Yellow for pending
+        'shipped': 'bg-blue-600 text-white font-bold p-1.5', // Steel blue for shipped
+        'delivered': 'bg-green-600 text-white font-bold p-1.5' // Lime green for delivered
     };
 
 
@@ -133,13 +133,17 @@ function Orders() {
                         </div>
                     )}
                 />
-                <Column style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }} alignHeader='center' align='center' header="Actions" body={(rowData) => (
-                    <div className="flex justify-evenly">
-                        <Button label="Invoice" className="p-button-sm" onClick={() => handleOrderClick(rowData.id)} />
-                        <Button label="Update Status" className="p-button-sm p-button-secondary" onClick={() => updateStatus(rowData)} />
-                        <Button label="Delete" className="p-button-sm p-button-danger" onClick={(e) => confirmDelete(e, rowData.id)} />
-                    </div>
-                )} />
+                <Column
+                style={{ border: '0.5px solid #9CA3AF' }} headerStyle={{ background: '#2463EB', color: 'white' }}
+                    header="Actions"
+                    body={(rowData) => (
+                        <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
+                            <Button label="Invoice" className="p-button-sm mb-2 md:mb-0 md:mr-2" onClick={() => handleOrderClick(rowData.id)} />
+                            <Button label="Update Status" className="p-button-sm p-button-secondary mb-2 md:mb-0 md:mr-2" onClick={() => updateStatus(rowData)} />
+                            <Button label="Delete" className="p-button-sm p-button-danger" onClick={(e) => confirmDelete(e, rowData.id)} />
+                        </div>
+                    )}
+                />
             </DataTable>
             <Dialog header="Update Order Status" visible={displayDialog} style={{ width: '400px' }} onHide={onHide} className="p-dialog-custom">
                 <div className="p-fluid p-formgrid p-grid">
