@@ -30,7 +30,7 @@ function Products() {
             const productsData = await getAllProducts();
             setCategories(categoriesData);
             setProducts(productsData);
-            console.log(products)
+            console.log(productsData)
             setFilteredProducts(productsData); // Set filteredProducts initially to all products
         } catch (error) {
             console.error("Error fetching data: ", error);
